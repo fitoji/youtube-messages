@@ -5,13 +5,14 @@ import Badge from "./Badge";
 
 const Message = memo(function Message({
   m,
-  read,
-  onToggleRead,
+  isRead,
+  toggleRead,
 }: {
   m: ChatMessage;
-  read: boolean;
-  onToggleRead: () => void;
+  isRead: (id: string) => boolean;
+  toggleRead: (id: string) => void;
 }) {
+  const read = isRead(m.id);
   const isSuperChat = m.type === "superChatEvent" || m.type === "superStickerEvent";
   const nameColor = m.isChatOwner
     ? "text-owner"
@@ -47,7 +48,7 @@ const Message = memo(function Message({
         <span className="mx-1.5 text-foreground/90 break-words">{m.message}</span>
       </div>
       <button
-        onClick={onToggleRead}
+        onClick={() => toggleRead(m.id)}
         title={read ? "Marcar como no leído" : "Marcar como leído"}
         aria-label={read ? "Marcar como no leído" : "Marcar como leído"}
         className={`flex-shrink-0 self-start mt-1 p-1 rounded-md hover:bg-accent transition-opacity ${

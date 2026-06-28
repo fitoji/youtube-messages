@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useServerFn } from "@tanstack/react-start";
 import Badge from "@/components/Badge";
@@ -54,7 +54,8 @@ function Index() {
   const [authorFilter, setAuthorFilter] = useState("");
   const [onlyHighlight, setOnlyHighlight] = useState(false);
   const [onlySuperChat, setOnlySuperChat] = useState(false);
-  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const readStateRef = useRef<Map<string, boolean>>(new Map());
+  const [readVersion, setReadVersion] = useState(0);
   const [hideRead, setHideRead] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
 
@@ -150,7 +151,7 @@ function Index() {
     const s = search.trim().toLowerCase();
     const a = authorFilter.trim().toLowerCase();
     return messages.filter((m) => {
-      if (hideRead && readIds.has(m.id)) return false;
+      if (hideRead && isRead(m.id)) return false;
       if (onlySuperChat) {
         if (m.type !== "superChatEvent" && m.type !== "superStickerEvent") return false;
       }
@@ -167,18 +168,14 @@ function Index() {
       if (a && !m.authorName.toLowerCase().includes(a)) return false;
       return true;
     });
-  }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, hideRead, readIds]);
+  }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, hideRead, readVersion]);
 
-  const toggleRead = (id: string) => {
-    setReadIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const getItemArgsRef = useRef<Record<string, () => void>>({});
+  const isRead = useCallback((id: string) => readStateRef.current.get(id) ?? false, []);
+  const toggleRead = useCallback((id: string) => {
+    const next = !readStateRef.current.get(id);
+    readStateRef.current.set(id, next);
+    setReadVersion((v) => v + 1);
+  }, []);
 
   const virtualizer = useVirtualizer({
     count: filtered.length,
@@ -321,7 +318,6 @@ function Index() {
               ) : (
                 virtualizer.getVirtualItems().map((item) => {
                   const m = filtered[item.index];
-                  getItemArgsRef.current[m.id] = () => toggleRead(m.id);
                   return (
                     <div
                       key={m.id}
@@ -334,8 +330,8 @@ function Index() {
                     >
                       <Message
                         m={m}
-                        read={readIds.has(m.id)}
-                        onToggleRead={getItemArgsRef.current[m.id]}
+                        isRead={isRead}
+                        toggleRead={toggleRead}
                       />
                     </div>
                   );
