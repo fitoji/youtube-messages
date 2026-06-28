@@ -1,0 +1,49 @@
+schema: spec-driven
+
+context: |
+  Tech stack: TanStack Start (React 19, TanStack Router, TanStack Query), Vite, Tailwind CSS v4, Radix UI / shadcn/ui, Zod, React Hook Form, Recharts, pnpm
+  Architecture: SSR full-stack via Nitro, file-based routing via TanStack Router, component-presentational pattern (ui/ + components/), server entry at src/server.ts
+  Testing: NO TEST RUNNER detected — Vitest absent, no test scripts, no testing-library deps
+  Style: Prettier (printWidth 100, semi, trailingComma all), ESLint flat config with typescript-eslint
+
+strict_tdd: false
+strict_tdd_reason: |
+  No test runner found. Vitest is not installed, package.json has no test script,
+  and no testing-library, Jest, or Playwright dependencies are present.
+
+testing:
+  runner: null
+  layers:
+    unit: false
+    integration: false
+    e2e: false
+  coverage: false
+  linter: true
+  linter_command: "pnpm lint"
+  type_checker: true
+  type_checker_command: "tsc --noEmit"
+  formatter: true
+  formatter_command: "pnpm format"
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Follow existing code patterns (src/components/ for UI, src/hooks/ for hooks, src/lib/ for utilities)
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing code patterns from src/components/ and src/lib/
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: ""
+    build_command: "pnpm build"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
