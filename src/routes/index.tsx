@@ -147,6 +147,13 @@ function Index() {
     setDialogOpen(true);
   };
 
+  const isRead = useCallback((id: string) => readStateRef.current.get(id) ?? false, []);
+  const toggleRead = useCallback((id: string) => {
+    const next = !readStateRef.current.get(id);
+    readStateRef.current.set(id, next);
+    setReadVersion((v) => v + 1);
+  }, []);
+
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
     const a = authorFilter.trim().toLowerCase();
@@ -169,13 +176,6 @@ function Index() {
       return true;
     });
   }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, hideRead, readVersion]);
-
-  const isRead = useCallback((id: string) => readStateRef.current.get(id) ?? false, []);
-  const toggleRead = useCallback((id: string) => {
-    const next = !readStateRef.current.get(id);
-    readStateRef.current.set(id, next);
-    setReadVersion((v) => v + 1);
-  }, []);
 
   const virtualizer = useVirtualizer({
     count: filtered.length,
