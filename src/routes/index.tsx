@@ -308,7 +308,7 @@ function Index() {
 
             <div
               ref={listRef}
-              className="mt-2 rounded-xl bg-card border border-border h-[60vh] overflow-y-auto p-2"
+              className="mt-2 rounded-xl bg-card border border-border h-[60vh] overflow-y-auto overflow-x-hidden relative p-2"
               style={{ paddingBottom: virtualizer.getTotalSize() }}
             >
               {filtered.length === 0 ? (
