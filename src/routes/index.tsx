@@ -429,6 +429,14 @@ function Index() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Keyboard shortcuts footer */}
+      <footer className="fixed bottom-0 inset-x-0 border-t border-border bg-card/80 backdrop-blur z-10">
+        <div className="mx-auto max-w-3xl px-4 py-2 flex items-center justify-center gap-6 text-xs text-muted-foreground">
+          <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">L</kbd> Marcar leído</span>
+          <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">G</kbd> Guardado</span>
+        </div>
+      </footer>
     </div>
   );
 }
