@@ -57,7 +57,7 @@ function Index() {
   const [onlyHighlight, setOnlyHighlight] = useState(false);
   const [onlySuperChat, setOnlySuperChat] = useState(false);
   const [onlyMembers, setOnlyMembers] = useState(false);
-  const readStateRef = useRef<Map<string, boolean>>(new Map());
+  const readStateRef = useRef<Map<string, boolean>>(() => new Map());
   const [readVersion, setReadVersion] = useState(0);
   const [hideRead, setHideRead] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
@@ -65,12 +65,12 @@ function Index() {
     if (typeof window === "undefined") return "dark";
     return (localStorage.getItem("theme") as "light" | "dark") || "dark";
   });
-  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const hoveredMessageIdRef = useRef<string | null>(null);
 
   const continuationRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stoppedRef = useRef(false);
-  const seenRef = useRef<Set<string>>(new Set());
+  const seenRef = useRef<Set<string>>(() => new Set());
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -155,19 +155,19 @@ function Index() {
     setDialogOpen(true);
   };
 
-  const isRead = useCallback((id: string) => readStateRef.current.get(id) ?? false, []);
-  const toggleRead = useCallback((id: string) => {
+  const isRead = (id: string) => readStateRef.current.get(id) ?? false;
+  const toggleRead = (id: string) => {
     const next = !readStateRef.current.get(id);
     readStateRef.current.set(id, next);
     setReadVersion((v) => v + 1);
-  }, []);
+  };
 
-  // Keyboard shortcuts (must be after toggleRead definition)
+  // Keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       if (e.key === "l" || e.key === "L") {
-        if (hoveredMessageId) toggleRead(hoveredMessageId);
+        if (hoveredMessageIdRef.current) toggleRead(hoveredMessageIdRef.current);
       }
       if (e.key === "g" || e.key === "G") {
         toast.success("Guardado!");
@@ -175,7 +175,7 @@ function Index() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [hoveredMessageId, toggleRead]);
+  }, [toggleRead]);
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -225,6 +225,7 @@ function Index() {
             <h1 className="text-base font-semibold tracking-tight">Live Chat Viewer</h1>
           </div>
           <button
+            type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="ml-auto p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground"
             title={theme === "dark" ? "Modo claro" : "Modo oscuro"}
@@ -232,6 +233,7 @@ function Index() {
             {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
           </button>
           <button
+            type="button"
             onClick={() => setDialogOpen(true)}
             className="text-xs px-2.5 py-1.5 rounded-md bg-secondary hover:bg-accent transition-colors"
           >
@@ -239,6 +241,7 @@ function Index() {
           </button>
           {info && (
             <button
+              type="button"
               onClick={disconnect}
               className="text-xs px-2.5 py-1.5 rounded-md bg-secondary hover:bg-accent transition-colors"
             >
@@ -253,6 +256,7 @@ function Index() {
           <section className="mt-12 text-center text-muted-foreground text-sm">
             <p>Pega la URL de una transmisión en vivo para empezar.</p>
             <button
+              type="button"
               onClick={() => setDialogOpen(true)}
               className="mt-4 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90"
             >
@@ -361,8 +365,8 @@ function Index() {
                   return (
                     <div
                       key={m.id}
-                      onMouseEnter={() => setHoveredMessageId(m.id)}
-                      onMouseLeave={() => setHoveredMessageId(null)}
+                      onMouseEnter={() => { hoveredMessageIdRef.current = m.id; }}
+                      onMouseLeave={() => { hoveredMessageIdRef.current = null; }}
                       style={{
                         position: "absolute",
                         transform: `translateY(${item.start}px)`,

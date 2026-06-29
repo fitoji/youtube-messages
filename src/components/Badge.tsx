@@ -1,6 +1,4 @@
-import { memo } from "react";
-
-const Badge = memo(function Badge({
+function Badge({
   label,
   tone,
 }: {
@@ -20,6 +18,6 @@ const Badge = memo(function Badge({
       {label}
     </span>
   );
-});
+}
 
 export default Badge;

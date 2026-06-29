@@ -1,9 +1,8 @@
-import { memo } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import type { ChatMessage } from "@/lib/youtube.functions";
 import Badge from "./Badge";
 
-const Message = memo(function Message({
+function Message({
   m,
   read,
   toggleRead,
@@ -47,6 +46,7 @@ const Message = memo(function Message({
         <span className="mx-1.5 text-foreground/90 break-words">{m.message}</span>
       </div>
       <button
+        type="button"
         onClick={() => toggleRead(m.id)}
         title={read ? "Marcar como no leído" : "Marcar como leído"}
         aria-label={read ? "Marcar como no leído" : "Marcar como leído"}
@@ -58,6 +58,6 @@ const Message = memo(function Message({
       </button>
     </div>
   );
-});
+}
 
 export default Message;
