@@ -520,15 +520,18 @@ function Index() {
       </footer>
 
       {/* Full screen reading mode */}
-      {fullScreenMessage && (
+      {fullScreenMessage && (() => {
+        const isSC = fullScreenMessage.type === "superChatEvent" || fullScreenMessage.type === "superStickerEvent";
+        return (
         <div
-          className="fixed inset-0 z-50 flex flex-col bg-background"
+          className="fixed inset-0 z-50 flex flex-col"
+          style={isSC ? { backgroundColor: "oklch(0.6 0.2 60 / 0.15)" } : undefined}
           role="dialog"
           aria-modal="true"
           aria-label="Lectura completa"
         >
           {/* Header */}
-          <header className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <header className={`flex items-center justify-between px-6 py-4 border-b ${isSC ? "border-superchat/30" : "border-border"}`}>
             <div className="flex items-center gap-3">
               {fullScreenMessage.authorPhoto && (
                 <img
@@ -563,13 +566,13 @@ function Index() {
 
           {/* Message content */}
           <main className="flex-1 flex items-center justify-center px-8 py-12">
-            <p className="text-2xl md:text-3xl text-foreground leading-relaxed max-w-2xl text-center">
+            <p className={`text-2xl md:text-3xl leading-relaxed max-w-2xl text-center ${isSC ? "text-superchat font-semibold" : "text-foreground"}`}>
               {fullScreenMessage.message}
             </p>
           </main>
 
           {/* Navigation footer */}
-          <footer className="px-6 py-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+          <footer className={`px-6 py-4 border-t flex items-center justify-between text-sm ${isSC ? "border-superchat/30 text-superchat/80" : "border-border text-muted-foreground"}`}>
             <span>
               {filtered.findIndex((m) => m.id === fullScreenMessage.id) + 1} / {filtered.length}
             </span>
@@ -582,7 +585,8 @@ function Index() {
             </div>
           </footer>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

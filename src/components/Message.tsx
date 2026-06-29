@@ -22,7 +22,7 @@ function Message({
 
   return (
     <div
-      className={`group flex gap-2 px-2 py-1.5 rounded-lg hover:bg-accent/40 transition-colors ${
+      className={`group flex gap-2 px-2 py-1.5 rounded-lg hover:bg-accent/80 transition-colors ${
         isSuperChat ? "bg-superchat/15 border border-superchat/40" : ""
       } ${read ? "opacity-50" : ""}`}
     >
