@@ -164,7 +164,46 @@ function Index() {
     setReadVersion((v) => v + 1);
   };
 
-  // Keyboard shortcuts
+  const filtered = useMemo(() => {
+    const s = search.trim().toLowerCase();
+    const a = authorFilter.trim().toLowerCase();
+    return messages.filter((m) => {
+      if (hideRead && isRead(m.id)) return false;
+      if (onlySuperChat) {
+        if (m.type !== "superChatEvent" && m.type !== "superStickerEvent") return false;
+      }
+      if (onlyMembers && !m.isChatSponsor) return false;
+      if (onlyHighlight) {
+        const isHL =
+          m.isChatOwner ||
+          m.isChatModerator ||
+          m.isChatSponsor ||
+          m.type === "superChatEvent" ||
+          m.type === "superStickerEvent";
+        if (!isHL) return false;
+      }
+      if (s && !m.message.toLowerCase().includes(s)) return false;
+      if (a && !m.authorName.toLowerCase().includes(a)) return false;
+      return true;
+    });
+  }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, onlyMembers, hideRead, readVersion]);
+
+  const virtualizer = useVirtualizer({
+    count: filtered.length,
+    getScrollElement: () => listRef.current,
+    estimateSize: () => 60,
+    overscan: 5,
+  });
+
+  useEffect(() => {
+    if (autoScroll) {
+      virtualizer.scrollToIndex(filtered.length - 1, { align: "end" });
+    } else {
+      virtualizer.scrollToIndex(0, { align: "start" });
+    }
+  }, [filtered.length, autoScroll, virtualizer]);
+
+  // Keyboard shortcuts (must be after filtered is defined)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
@@ -213,45 +252,6 @@ function Index() {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [toggleRead, fullScreenMessage, filtered]);
-
-  const filtered = useMemo(() => {
-    const s = search.trim().toLowerCase();
-    const a = authorFilter.trim().toLowerCase();
-    return messages.filter((m) => {
-      if (hideRead && isRead(m.id)) return false;
-      if (onlySuperChat) {
-        if (m.type !== "superChatEvent" && m.type !== "superStickerEvent") return false;
-      }
-      if (onlyMembers && !m.isChatSponsor) return false;
-      if (onlyHighlight) {
-        const isHL =
-          m.isChatOwner ||
-          m.isChatModerator ||
-          m.isChatSponsor ||
-          m.type === "superChatEvent" ||
-          m.type === "superStickerEvent";
-        if (!isHL) return false;
-      }
-      if (s && !m.message.toLowerCase().includes(s)) return false;
-      if (a && !m.authorName.toLowerCase().includes(a)) return false;
-      return true;
-    });
-  }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, onlyMembers, hideRead, readVersion]);
-
-  const virtualizer = useVirtualizer({
-    count: filtered.length,
-    getScrollElement: () => listRef.current,
-    estimateSize: () => 60,
-    overscan: 5,
-  });
-
-  useEffect(() => {
-    if (autoScroll) {
-      virtualizer.scrollToIndex(filtered.length - 1, { align: "end" });
-    } else {
-      virtualizer.scrollToIndex(0, { align: "start" });
-    }
-  }, [filtered.length, autoScroll, virtualizer]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
