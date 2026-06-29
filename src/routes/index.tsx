@@ -273,6 +273,7 @@ function Index() {
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="ml-auto p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground"
             aria-label={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+            suppressHydrationWarning
           >
             {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
           </button>
