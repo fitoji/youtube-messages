@@ -57,14 +57,12 @@ function Index() {
   const [onlyHighlight, setOnlyHighlight] = useState(false);
   const [onlySuperChat, setOnlySuperChat] = useState(false);
   const [onlyMembers, setOnlyMembers] = useState(false);
-  const readStateRef = useRef<Map<string, boolean>>(() => new Map());
+  const readStateRef = useRef<Map<string, boolean>>(new Map());
   const [readVersion, setReadVersion] = useState(0);
   const [hideRead, setHideRead] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window === "undefined") return "dark";
-    return (localStorage.getItem("theme") as "light" | "dark") || "dark";
-  });
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [themeMounted, setThemeMounted] = useState(false);
   const hoveredMessageIdRef = useRef<string | null>(null);
   const focusedMessageIdRef = useRef<string | null>(null);
   const [fullScreenMessage, setFullScreenMessage] = useState<ChatMessage | null>(null);
@@ -72,8 +70,15 @@ function Index() {
   const continuationRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stoppedRef = useRef(false);
-  const seenRef = useRef<Set<string>>(() => new Set());
+  const seenRef = useRef<Set<string>>(new Set());
   const listRef = useRef<HTMLDivElement>(null);
+
+  // Hydrate theme from localStorage after mount (avoids hydration mismatch)
+  useEffect(() => {
+    const stored = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (stored) setTheme(stored);
+    setThemeMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!info) return;
@@ -275,7 +280,7 @@ function Index() {
             aria-label={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
             suppressHydrationWarning
           >
-            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            {themeMounted ? (theme === "dark" ? <Sun size={16} /> : <Moon size={16} />) : <span className="w-4 h-4" />}
           </button>
           <button
             type="button"
