@@ -194,7 +194,7 @@ function Index() {
     });
   }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, onlyMembers, hideRead, readVersion]);
 
-  const GAP = 4; // px between messages
+  const GAP = 8; // px between messages
 
   const virtualizer = useVirtualizer({
     count: filtered.length,
