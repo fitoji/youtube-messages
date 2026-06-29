@@ -567,7 +567,7 @@ function Index() {
                   </div>
                 </div>
                 {isSC && fullScreenMessage.superChatAmount && (
-                  <span className="flex-shrink-0 px-3 py-1 rounded-full bg-black/15 font-bold text-lg text-black">
+                  <span className="flex-shrink-0 px-3 py-1 rounded-full bg-black/15 font-bold text-lg text-white">
                     {fullScreenMessage.superChatAmount}
                   </span>
                 )}
