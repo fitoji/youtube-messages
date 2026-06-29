@@ -268,7 +268,7 @@ function Index() {
   }, [toggleRead, fullScreenMessage, filtered]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="h-screen flex flex-col bg-background text-foreground">
       {/* Skip link for keyboard users */}
       <a
         href="#chat-content"
@@ -310,7 +310,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-4 pb-24">
+      <main className="flex-1 flex flex-col mx-auto max-w-3xl px-4 py-4 pb-16 overflow-hidden">
         {!info ? (
           <section className="mt-12 text-center text-muted-foreground text-sm">
             <p>Pega la URL de una transmisión en vivo para empezar.</p>
@@ -414,7 +414,7 @@ function Index() {
             <div
               id="chat-content"
               ref={listRef}
-              className="mt-2 rounded-xl bg-card border border-border h-[60vh] overflow-y-auto overflow-x-hidden relative p-2"
+              className="mt-2 rounded-xl bg-card border border-border flex-1 min-h-0 overflow-y-auto overflow-x-hidden relative p-2 pb-14"
               style={{ paddingBottom: virtualizer.getTotalSize() }}
               tabIndex={-1}
             >
