@@ -213,14 +213,15 @@ function Index() {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
-      // Full screen mode active — handle navigation
+      // Full screen mode active — handle navigation and shortcuts
       if (fullScreenMessage) {
-        if (e.key === "Escape") {
+        if (e.key === "Escape" || e.key === "f" || e.key === "F") {
           setFullScreenMessage(null);
           return;
         }
         if (e.key === " " || e.key === "ArrowDown" || e.key === "ArrowRight") {
           e.preventDefault();
+          toggleRead(fullScreenMessage.id);
           const currentIdx = filtered.findIndex((m) => m.id === fullScreenMessage.id);
           if (currentIdx < filtered.length - 1) {
             setFullScreenMessage(filtered[currentIdx + 1]);
@@ -235,7 +236,15 @@ function Index() {
           }
           return;
         }
-        return; // Don't process other shortcuts in fullscreen
+        if (e.key === "l" || e.key === "L") {
+          toggleRead(fullScreenMessage.id);
+          return;
+        }
+        if (e.key === "g" || e.key === "G") {
+          toast.success("Guardado!");
+          return;
+        }
+        return;
       }
 
       // Normal mode shortcuts
@@ -559,9 +568,11 @@ function Index() {
               {filtered.findIndex((m) => m.id === fullScreenMessage.id) + 1} / {filtered.length}
             </span>
             <div className="flex items-center gap-4">
-              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">Espacio</kbd> Siguiente</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">Espacio</kbd> Siguiente + leer</span>
               <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">←</kbd> Anterior</span>
-              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">Esc</kbd> Cerrar</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">L</kbd> Leer</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">G</kbd> Guardar</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">F</kbd> Cerrar</span>
             </div>
           </footer>
         </div>
