@@ -323,7 +323,7 @@ function Index() {
             </button>
           </section>
         ) : (
-          <section>
+          <section className="flex-1 flex flex-col min-h-0">
             <div className="flex gap-3 items-start rounded-xl bg-card border border-border p-3">
               {info.thumbnail && (
                 <img
