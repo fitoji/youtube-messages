@@ -418,7 +418,7 @@ function Index() {
             <div
               id="chat-content"
               ref={listRef}
-              className="mt-2 rounded-xl bg-card border border-border flex-1 min-h-0 overflow-y-auto overflow-x-hidden relative p-2 pb-14"
+              className="mt-2 rounded-xl bg-card border border-border h-full min-h-0 overflow-y-auto overflow-x-hidden relative p-2 pb-14"
               style={{ paddingBottom: virtualizer.getTotalSize() }}
               tabIndex={-1}
             >
