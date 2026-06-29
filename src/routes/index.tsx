@@ -524,14 +524,14 @@ function Index() {
         const isSC = fullScreenMessage.type === "superChatEvent" || fullScreenMessage.type === "superStickerEvent";
         return (
         <div
-          className="fixed inset-0 z-50 flex flex-col"
-          style={isSC ? { backgroundColor: "oklch(0.6 0.2 60 / 0.15)" } : undefined}
+          className="fixed inset-0 z-50 flex flex-col backdrop-blur-xl"
+          style={isSC ? { backgroundColor: "oklch(0.6 0.2 60 / 0.3)" } : { backgroundColor: "oklch(0 0 0 / 0.4)" }}
           role="dialog"
           aria-modal="true"
           aria-label="Lectura completa"
         >
           {/* Header */}
-          <header className={`flex items-center justify-between px-6 py-4 border-b ${isSC ? "border-superchat/30" : "border-border"}`}>
+          <header className={`flex items-center justify-between px-6 py-4 border-b ${isSC ? "border-superchat/30" : "border-white/10"}`}>
             <div className="flex items-center gap-3">
               {fullScreenMessage.authorPhoto && (
                 <img
@@ -557,7 +557,7 @@ function Index() {
             <button
               type="button"
               onClick={() => setFullScreenMessage(null)}
-              className="p-2 rounded-md hover:bg-accent text-muted-foreground"
+              className="p-2 rounded-md hover:bg-white/10 text-white/70"
               aria-label="Cerrar"
             >
               ✕
@@ -566,22 +566,24 @@ function Index() {
 
           {/* Message content */}
           <main className="flex-1 flex items-center justify-center px-8 py-12">
-            <p className={`text-2xl md:text-3xl leading-relaxed max-w-2xl text-center ${isSC ? "text-superchat font-semibold" : "text-foreground"}`}>
-              {fullScreenMessage.message}
-            </p>
+            <div className={`rounded-2xl px-8 py-6 max-w-2xl ${isSC ? "bg-superchat/20 border border-superchat/40" : "bg-card/90 border border-border/50"}`}>
+              <p className={`text-2xl md:text-3xl leading-relaxed text-center opacity-100 ${isSC ? "text-superchat font-semibold" : "text-foreground"}`}>
+                {fullScreenMessage.message}
+              </p>
+            </div>
           </main>
 
           {/* Navigation footer */}
-          <footer className={`px-6 py-4 border-t flex items-center justify-between text-sm ${isSC ? "border-superchat/30 text-superchat/80" : "border-border text-muted-foreground"}`}>
+          <footer className={`px-6 py-4 border-t flex items-center justify-between text-sm ${isSC ? "border-superchat/30 text-superchat/80" : "border-white/10 text-white/60"}`}>
             <span>
               {filtered.findIndex((m) => m.id === fullScreenMessage.id) + 1} / {filtered.length}
             </span>
             <div className="flex items-center gap-4">
-              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">Espacio</kbd> Siguiente + leer</span>
-              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">←</kbd> Anterior</span>
-              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">L</kbd> Leer</span>
-              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">G</kbd> Guardar</span>
-              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">F</kbd> Cerrar</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/80 font-mono text-[10px]">Espacio</kbd> Siguiente + leer</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/80 font-mono text-[10px]">←</kbd> Anterior</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/80 font-mono text-[10px]">L</kbd> Leer</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/80 font-mono text-[10px]">G</kbd> Guardar</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/80 font-mono text-[10px]">F</kbd> Cerrar</span>
             </div>
           </footer>
         </div>
