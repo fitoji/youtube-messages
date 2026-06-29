@@ -546,27 +546,31 @@ function Index() {
           <main className="flex-1 flex items-center justify-center px-8 py-12">
             <div className={`rounded-2xl px-8 py-6 max-w-2xl w-full ${isSC ? "bg-superchat border border-superchat/60 shadow-lg shadow-superchat/20" : "bg-card/90 border border-border/50"}`}>
               {/* Author header inside card */}
-              <div className={`flex items-center gap-3 mb-4 pb-4 border-b ${isSC ? "border-black/15" : "border-white/10"}`}>
-                {fullScreenMessage.authorPhoto && (
-                  <img
-                    src={fullScreenMessage.authorPhoto}
-                    alt={fullScreenMessage.authorName}
-                    className="w-10 h-10 rounded-full"
-                  />
-                )}
-                <div>
-                  <span className={`font-semibold text-lg ${isSC ? "text-black" : nameColor}`}>
-                    {fullScreenMessage.authorName}
-                  </span>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    {fullScreenMessage.isChatOwner && <Badge label="Autor" tone="owner" />}
-                    {fullScreenMessage.isChatModerator && <Badge label="Mod" tone="moderator" />}
-                    {fullScreenMessage.isChatSponsor && <Badge label="Miembro" tone="sponsor" />}
-                    {isSC && fullScreenMessage.superChatAmount && (
-                      <Badge label={`Super Chat ${fullScreenMessage.superChatAmount}`} tone="superchat" />
-                    )}
+              <div className={`flex items-center justify-between gap-3 mb-4 pb-4 border-b ${isSC ? "border-black/15" : "border-white/10"}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  {fullScreenMessage.authorPhoto && (
+                    <img
+                      src={fullScreenMessage.authorPhoto}
+                      alt={fullScreenMessage.authorName}
+                      className="w-10 h-10 rounded-full flex-shrink-0"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <span className={`font-semibold text-lg ${isSC ? "text-black" : nameColor}`}>
+                      {fullScreenMessage.authorName}
+                    </span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      {fullScreenMessage.isChatOwner && <Badge label="Autor" tone="owner" />}
+                      {fullScreenMessage.isChatModerator && <Badge label="Mod" tone="moderator" />}
+                      {fullScreenMessage.isChatSponsor && <Badge label="Miembro" tone="sponsor" />}
+                    </div>
                   </div>
                 </div>
+                {isSC && fullScreenMessage.superChatAmount && (
+                  <span className={`flex-shrink-0 font-bold text-lg ${isSC ? "text-black" : "text-superchat"}`}>
+                    {fullScreenMessage.superChatAmount}
+                  </span>
+                )}
               </div>
               {/* Message text */}
               <p className={`text-2xl md:text-3xl leading-relaxed opacity-100 ${isSC ? "text-black font-semibold" : "text-foreground"}`}>
