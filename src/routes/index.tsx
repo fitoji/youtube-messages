@@ -330,7 +330,7 @@ function Index() {
                     >
                       <Message
                         m={m}
-                        isRead={isRead}
+                        read={isRead(m.id)}
                         toggleRead={toggleRead}
                       />
                     </div>

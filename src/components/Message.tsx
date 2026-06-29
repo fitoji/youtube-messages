@@ -5,14 +5,13 @@ import Badge from "./Badge";
 
 const Message = memo(function Message({
   m,
-  isRead,
+  read,
   toggleRead,
 }: {
   m: ChatMessage;
-  isRead: (id: string) => boolean;
+  read: boolean;
   toggleRead: (id: string) => void;
 }) {
-  const read = isRead(m.id);
   const isSuperChat = m.type === "superChatEvent" || m.type === "superStickerEvent";
   const nameColor = m.isChatOwner
     ? "text-owner"
