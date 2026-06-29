@@ -112,3 +112,9 @@
 .live-dot {
   animation: pulse-dot 1.4s ease-in-out infinite;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+}

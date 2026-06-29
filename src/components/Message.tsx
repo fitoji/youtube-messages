@@ -29,7 +29,7 @@ function Message({
       {m.authorPhoto && (
         <img
           src={m.authorPhoto}
-          alt=""
+          alt={m.authorName}
           className="w-7 h-7 rounded-full flex-shrink-0 mt-0.5"
           loading="lazy"
           referrerPolicy="no-referrer"

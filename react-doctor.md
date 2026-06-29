@@ -1,23 +1,19 @@
 Fix the top 3 React Doctor issues in youtubeviewer on this pass — leave the rest for a follow-up.
 
-1. WARN Maintainability: React 19 API migration can break callers (×164)
+1. WARN Maintainability: React 19 API migration can break callers (×1)
    useContext is replaced by `use()` in React 19, which reads context inside ifs & loops too, so switch to `import { use } from 'react'`.
    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-react19-deprecated-apis
    - .agents/skills/tailwind-v4-shadcn/templates/theme-provider.tsx:1
-   - src/components/ui/accordion.tsx:9
-   - src/components/ui/alert-dialog.tsx:13
-   - +37 more files
-   Migration-scale (40 files): fix a representative sample, confirm the recipe holds, and get the code owner's sign-off before changing the rest in one pass.
 2. WARN Bugs: Event logic handled in an effect (×4)
    Faking an event handler with a prop plus a useEffect costs an extra render & runs late.
    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-event-handler
    - .agents/skills/tailwind-v4-shadcn/templates/theme-provider.tsx:32
    - src/components/ui/calendar.tsx:149
-3. WARN Maintainability: deslop/unused-dependency (×4)
-   Unused dependency: `@hookform/resolvers`
-   - package.json
+3. WARN Security: react-doctor/require-pnpm-hardening (×1)
+   pnpm-workspace.yaml is missing `trustPolicy` — without `no-downgrade`, pnpm silently accepts packages whose trust signals (provenance, signatures) weaken between updates
+   - pnpm-workspace.yaml
 
-Full results for all 297 issues (diagnostics.json + a .txt per rule): /var/folders/yw/6bjyc44d1rgg5163wpzd1cr80000gn/T/react-doctor-0bd3bcbd-fb0d-4846-a266-958f2b555917
+Full results for all 112 issues (diagnostics.json + a .txt per rule): /var/folders/yw/6bjyc44d1rgg5163wpzd1cr80000gn/T/react-doctor-500ab837-6aa6-4a82-95ac-e74e3e366d84
 
 Read each file and fix the root cause — don't suppress or silence the rule.
 

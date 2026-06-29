@@ -66,6 +66,7 @@ function Index() {
     return (localStorage.getItem("theme") as "light" | "dark") || "dark";
   });
   const hoveredMessageIdRef = useRef<string | null>(null);
+  const focusedMessageIdRef = useRef<string | null>(null);
 
   const continuationRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,7 +168,8 @@ function Index() {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       if (e.key === "l" || e.key === "L") {
-        if (hoveredMessageIdRef.current) toggleRead(hoveredMessageIdRef.current);
+        const target = focusedMessageIdRef.current || hoveredMessageIdRef.current;
+        if (target) toggleRead(target);
       }
       if (e.key === "g" || e.key === "G") {
         toast.success("Guardado!");
@@ -218,6 +220,13 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Skip link for keyboard users */}
+      <a
+        href="#chat-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md"
+      >
+        Saltar al chat
+      </a>
       <header className="border-b border-border bg-card/40 backdrop-blur sticky top-0 z-10">
         <div className="mx-auto max-w-3xl px-4 py-3 flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -228,7 +237,7 @@ function Index() {
             type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="ml-auto p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground"
-            title={theme === "dark" ? "Modo claro" : "Modo oscuro"}
+            aria-label={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
           >
             {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
           </button>
@@ -269,7 +278,7 @@ function Index() {
               {info.thumbnail && (
                 <img
                   src={info.thumbnail}
-                  alt=""
+                  alt={info.title || "Thumbnail del video"}
                   className="w-20 h-14 object-cover rounded-md flex-shrink-0"
                 />
               )}
@@ -288,12 +297,14 @@ function Index() {
                 placeholder="Buscar en mensajes..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                aria-label="Buscar en mensajes"
                 className="col-span-2 rounded-lg bg-input border border-border px-3 py-2 text-sm outline-none focus:border-ring"
               />
               <input
                 placeholder="Filtrar por autor"
                 value={authorFilter}
                 onChange={(e) => setAuthorFilter(e.target.value)}
+                aria-label="Filtrar por autor"
                 className="rounded-lg bg-input border border-border px-3 py-2 text-sm outline-none focus:border-ring"
               />
               <label className="flex items-center gap-2 text-xs text-muted-foreground px-2">
@@ -351,9 +362,11 @@ function Index() {
             </div>
 
             <div
+              id="chat-content"
               ref={listRef}
               className="mt-2 rounded-xl bg-card border border-border h-[60vh] overflow-y-auto overflow-x-hidden relative p-2"
               style={{ paddingBottom: virtualizer.getTotalSize() }}
+              tabIndex={-1}
             >
               {filtered.length === 0 ? (
                 <p className="text-center text-sm text-muted-foreground py-12">
@@ -365,8 +378,14 @@ function Index() {
                   return (
                     <div
                       key={m.id}
+                      tabIndex={0}
+                      role="article"
+                      aria-label={`Mensaje de ${m.authorName}`}
                       onMouseEnter={() => { hoveredMessageIdRef.current = m.id; }}
                       onMouseLeave={() => { hoveredMessageIdRef.current = null; }}
+                      onFocus={() => { focusedMessageIdRef.current = m.id; }}
+                      onBlur={() => { focusedMessageIdRef.current = null; }}
+                      className="focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring rounded-lg"
                       style={{
                         position: "absolute",
                         transform: `translateY(${item.start}px)`,
@@ -385,7 +404,7 @@ function Index() {
               )}
             </div>
 
-            {error && <p className="mt-3 text-xs text-destructive">{error}</p>}
+            {error && <p role="alert" className="mt-3 text-xs text-destructive">{error}</p>}
           </section>
         )}
       </main>
@@ -405,10 +424,11 @@ function Index() {
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
               placeholder="https://www.youtube.com/watch?v=..."
+              aria-label="URL del video de YouTube"
               className="w-full rounded-lg bg-input border border-border px-3 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
             />
             {error && (
-              <p className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-md px-3 py-2">
+              <p role="alert" className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-md px-3 py-2">
                 {error}
               </p>
             )}
