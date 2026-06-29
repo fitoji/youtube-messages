@@ -130,25 +130,6 @@ function Index() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      // Ignore if typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-
-      if (e.key === "l" || e.key === "L") {
-        if (hoveredMessageId) {
-          toggleRead(hoveredMessageId);
-        }
-      }
-      if (e.key === "g" || e.key === "G") {
-        toast.success("Guardado!");
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [hoveredMessageId, toggleRead]);
-
   const connect = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -180,6 +161,21 @@ function Index() {
     readStateRef.current.set(id, next);
     setReadVersion((v) => v + 1);
   }, []);
+
+  // Keyboard shortcuts (must be after toggleRead definition)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === "l" || e.key === "L") {
+        if (hoveredMessageId) toggleRead(hoveredMessageId);
+      }
+      if (e.key === "g" || e.key === "G") {
+        toast.success("Guardado!");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [hoveredMessageId, toggleRead]);
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
