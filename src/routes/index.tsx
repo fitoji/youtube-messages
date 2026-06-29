@@ -193,11 +193,14 @@ function Index() {
     });
   }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, onlyMembers, hideRead, readVersion]);
 
+  const GAP = 4; // px between messages
+
   const virtualizer = useVirtualizer({
     count: filtered.length,
     getScrollElement: () => listRef.current,
     estimateSize: () => 60,
     overscan: 5,
+    gap: GAP,
   });
 
   useEffect(() => {
@@ -310,7 +313,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col mx-auto max-w-3xl px-4 py-4 pb-16 overflow-hidden">
+      <main className="flex-1 flex flex-col min-h-0 mx-auto max-w-3xl px-4 py-4 pb-16 overflow-hidden">
         {!info ? (
           <section className="mt-12 text-center text-muted-foreground text-sm">
             <p>Pega la URL de una transmisión en vivo para empezar.</p>
@@ -438,9 +441,12 @@ function Index() {
                       className="focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring rounded-lg"
                       style={{
                         position: "absolute",
+                        top: 0,
+                        left: 0,
                         transform: `translateY(${item.start}px)`,
                         height: item.size,
                         width: "100%",
+                        paddingRight: "2px",
                       }}
                     >
                       <Message
