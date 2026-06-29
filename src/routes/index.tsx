@@ -201,12 +201,10 @@ function Index() {
   });
 
   useEffect(() => {
-    if (autoScroll) {
-      virtualizer.scrollToIndex(filtered.length - 1, { align: "end" });
-    } else {
-      virtualizer.scrollToIndex(0, { align: "start" });
+    if (autoScroll && listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
     }
-  }, [filtered.length, autoScroll, virtualizer]);
+  }, [filtered.length, autoScroll]);
 
   // Keyboard shortcuts (must be after filtered is defined)
   useEffect(() => {
