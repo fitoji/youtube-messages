@@ -37,6 +37,35 @@
 
 :root {
   --radius: 0.75rem;
+  /* Light theme */
+  --background: oklch(0.97 0.005 260);
+  --foreground: oklch(0.16 0.01 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0.01 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0.01 260);
+  --primary: oklch(0.65 0.23 25);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.93 0.005 260);
+  --secondary-foreground: oklch(0.16 0.01 260);
+  --muted: oklch(0.94 0.005 260);
+  --muted-foreground: oklch(0.45 0.02 260);
+  --accent: oklch(0.94 0.01 260);
+  --accent-foreground: oklch(0.16 0.01 260);
+  --destructive: oklch(0.62 0.24 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.88 0.005 260);
+  --input: oklch(0.9 0.005 260);
+  --ring: oklch(0.65 0.23 25);
+
+  --owner: oklch(0.55 0.18 75);
+  --moderator: oklch(0.5 0.18 250);
+  --sponsor: oklch(0.5 0.18 150);
+  --superchat: oklch(0.6 0.2 60);
+  --live: oklch(0.65 0.25 25);
+}
+
+.dark {
   /* Dark, YouTube-Studio inspired */
   --background: oklch(0.16 0.01 260);
   --foreground: oklch(0.97 0.005 260);
@@ -44,7 +73,7 @@
   --card-foreground: oklch(0.97 0.005 260);
   --popover: oklch(0.21 0.012 260);
   --popover-foreground: oklch(0.97 0.005 260);
-  --primary: oklch(0.65 0.23 25); /* YouTube-ish red */
+  --primary: oklch(0.65 0.23 25);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.28 0.015 260);
   --secondary-foreground: oklch(0.97 0.005 260);
@@ -58,16 +87,11 @@
   --input: oklch(0.26 0.012 260);
   --ring: oklch(0.65 0.23 25);
 
-  --owner: oklch(0.78 0.18 75);       /* gold for channel owner */
-  --moderator: oklch(0.65 0.18 250);  /* blue */
-  --sponsor: oklch(0.65 0.18 150);    /* green */
-  --superchat: oklch(0.75 0.2 60);    /* amber */
+  --owner: oklch(0.78 0.18 75);
+  --moderator: oklch(0.65 0.18 250);
+  --sponsor: oklch(0.65 0.18 150);
+  --superchat: oklch(0.75 0.2 60);
   --live: oklch(0.65 0.25 25);
-}
-
-.dark {
-  --background: oklch(0.16 0.01 260);
-  --foreground: oklch(0.97 0.005 260);
 }
 
 @layer base {

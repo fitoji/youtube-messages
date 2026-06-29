@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { Moon, Sun } from "lucide-react";
 import Badge from "@/components/Badge";
 import Message from "@/components/Message";
 import {
@@ -59,6 +61,11 @@ function Index() {
   const [readVersion, setReadVersion] = useState(0);
   const [hideRead, setHideRead] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "dark";
+    return (localStorage.getItem("theme") as "light" | "dark") || "dark";
+  });
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
 
   const continuationRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -117,11 +124,30 @@ function Index() {
     };
   }, [info, fetchChat]);
 
+  // Theme: sync class on <html> and persist to localStorage
   useEffect(() => {
-    if (!autoScroll) return;
-    const el = listRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, autoScroll]);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === "l" || e.key === "L") {
+        if (hoveredMessageId) {
+          toggleRead(hoveredMessageId);
+        }
+      }
+      if (e.key === "g" || e.key === "G") {
+        toast.success("Guardado!");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [hoveredMessageId, toggleRead]);
 
   const connect = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,8 +229,15 @@ function Index() {
             <h1 className="text-base font-semibold tracking-tight">Live Chat Viewer</h1>
           </div>
           <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="ml-auto p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground"
+            title={theme === "dark" ? "Modo claro" : "Modo oscuro"}
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <button
             onClick={() => setDialogOpen(true)}
-            className="ml-auto text-xs px-2.5 py-1.5 rounded-md bg-secondary hover:bg-accent transition-colors"
+            className="text-xs px-2.5 py-1.5 rounded-md bg-secondary hover:bg-accent transition-colors"
           >
             {info ? "Cambiar transmisión" : "Conectar"}
           </button>
@@ -332,6 +365,8 @@ function Index() {
                   return (
                     <div
                       key={m.id}
+                      onMouseEnter={() => setHoveredMessageId(m.id)}
+                      onMouseLeave={() => setHoveredMessageId(null)}
                       style={{
                         position: "absolute",
                         transform: `translateY(${item.start}px)`,
