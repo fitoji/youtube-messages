@@ -13,7 +13,7 @@ export default function MessageText({ text }: { text: string }) {
               href={urls[i]}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 decoration-foreground/30 hover:decoration-foreground/60 text-inherit transition-colors"
+              className="underline underline-offset-2 decoration-current/30 hover:decoration-current/60 text-inherit transition-colors"
             >
               {urls[i]}
             </a>

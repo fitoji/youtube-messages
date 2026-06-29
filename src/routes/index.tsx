@@ -544,9 +544,9 @@ function Index() {
 
           {/* Message card */}
           <main className="flex-1 flex items-center justify-center px-8 py-12">
-            <div className={`rounded-2xl px-8 py-6 max-w-2xl w-full ${isSC ? "bg-superchat/20 border border-superchat/40" : "bg-card/90 border border-border/50"}`}>
+            <div className={`rounded-2xl px-8 py-6 max-w-2xl w-full ${isSC ? "bg-superchat border border-superchat/60 shadow-lg shadow-superchat/20" : "bg-card/90 border border-border/50"}`}>
               {/* Author header inside card */}
-              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+              <div className={`flex items-center gap-3 mb-4 pb-4 border-b ${isSC ? "border-black/15" : "border-white/10"}`}>
                 {fullScreenMessage.authorPhoto && (
                   <img
                     src={fullScreenMessage.authorPhoto}
@@ -555,7 +555,7 @@ function Index() {
                   />
                 )}
                 <div>
-                  <span className={`font-semibold text-lg ${nameColor}`}>
+                  <span className={`font-semibold text-lg ${isSC ? "text-black" : nameColor}`}>
                     {fullScreenMessage.authorName}
                   </span>
                   <div className="flex items-center gap-2 mt-0.5">
@@ -569,7 +569,7 @@ function Index() {
                 </div>
               </div>
               {/* Message text */}
-              <p className={`text-2xl md:text-3xl leading-relaxed opacity-100 ${isSC ? "text-superchat font-semibold" : "text-foreground"}`}>
+              <p className={`text-2xl md:text-3xl leading-relaxed opacity-100 ${isSC ? "text-black font-semibold" : "text-foreground"}`}>
                 <MessageText text={fullScreenMessage.message} />
               </p>
             </div>
