@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Moon, Sun } from "lucide-react";
 import Badge from "@/components/Badge";
 import Message from "@/components/Message";
+import MessageText from "@/components/MessageText";
 import {
   getLiveInfo,
   getChatMessages,
@@ -522,6 +523,7 @@ function Index() {
       {/* Full screen reading mode */}
       {fullScreenMessage && (() => {
         const isSC = fullScreenMessage.type === "superChatEvent" || fullScreenMessage.type === "superStickerEvent";
+        const nameColor = fullScreenMessage.isChatOwner ? "text-owner" : fullScreenMessage.isChatModerator ? "text-moderator" : fullScreenMessage.isChatSponsor ? "text-sponsor" : "text-foreground";
         return (
         <div
           className="fixed inset-0 z-50 flex flex-col backdrop-blur-xl"
@@ -530,45 +532,45 @@ function Index() {
           aria-modal="true"
           aria-label="Lectura completa"
         >
-          {/* Header */}
-          <header className={`flex items-center justify-between px-6 py-4 border-b ${isSC ? "border-superchat/30" : "border-white/10"}`}>
-            <div className="flex items-center gap-3">
-              {fullScreenMessage.authorPhoto && (
-                <img
-                  src={fullScreenMessage.authorPhoto}
-                  alt={fullScreenMessage.authorName}
-                  className="w-10 h-10 rounded-full"
-                />
-              )}
-              <div>
-                <span className={`font-semibold ${fullScreenMessage.isChatOwner ? "text-owner" : fullScreenMessage.isChatModerator ? "text-moderator" : fullScreenMessage.isChatSponsor ? "text-sponsor" : "text-foreground"}`}>
-                  {fullScreenMessage.authorName}
-                </span>
-                <div className="flex items-center gap-2 mt-0.5">
-                  {fullScreenMessage.isChatOwner && <Badge label="Autor" tone="owner" />}
-                  {fullScreenMessage.isChatModerator && <Badge label="Mod" tone="moderator" />}
-                  {fullScreenMessage.isChatSponsor && <Badge label="Miembro" tone="sponsor" />}
-                  {fullScreenMessage.type === "superChatEvent" && fullScreenMessage.superChatAmount && (
-                    <Badge label={`Super Chat ${fullScreenMessage.superChatAmount}`} tone="superchat" />
-                  )}
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => setFullScreenMessage(null)}
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-colors z-10"
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
+
+          {/* Message card */}
+          <main className="flex-1 flex items-center justify-center px-8 py-12">
+            <div className={`rounded-2xl px-8 py-6 max-w-2xl w-full ${isSC ? "bg-superchat/20 border border-superchat/40" : "bg-card/90 border border-border/50"}`}>
+              {/* Author header inside card */}
+              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                {fullScreenMessage.authorPhoto && (
+                  <img
+                    src={fullScreenMessage.authorPhoto}
+                    alt={fullScreenMessage.authorName}
+                    className="w-10 h-10 rounded-full"
+                  />
+                )}
+                <div>
+                  <span className={`font-semibold text-lg ${nameColor}`}>
+                    {fullScreenMessage.authorName}
+                  </span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    {fullScreenMessage.isChatOwner && <Badge label="Autor" tone="owner" />}
+                    {fullScreenMessage.isChatModerator && <Badge label="Mod" tone="moderator" />}
+                    {fullScreenMessage.isChatSponsor && <Badge label="Miembro" tone="sponsor" />}
+                    {isSC && fullScreenMessage.superChatAmount && (
+                      <Badge label={`Super Chat ${fullScreenMessage.superChatAmount}`} tone="superchat" />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setFullScreenMessage(null)}
-              className="p-2 rounded-md hover:bg-white/10 text-white/70"
-              aria-label="Cerrar"
-            >
-              ✕
-            </button>
-          </header>
-
-          {/* Message content */}
-          <main className="flex-1 flex items-center justify-center px-8 py-12">
-            <div className={`rounded-2xl px-8 py-6 max-w-2xl ${isSC ? "bg-superchat/20 border border-superchat/40" : "bg-card/90 border border-border/50"}`}>
-              <p className={`text-2xl md:text-3xl leading-relaxed text-center opacity-100 ${isSC ? "text-superchat font-semibold" : "text-foreground"}`}>
-                {fullScreenMessage.message}
+              {/* Message text */}
+              <p className={`text-2xl md:text-3xl leading-relaxed opacity-100 ${isSC ? "text-superchat font-semibold" : "text-foreground"}`}>
+                <MessageText text={fullScreenMessage.message} />
               </p>
             </div>
           </main>

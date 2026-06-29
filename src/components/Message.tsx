@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import type { ChatMessage } from "@/lib/youtube.functions";
 import Badge from "./Badge";
+import MessageText from "./MessageText";
 
 function Message({
   m,
@@ -43,7 +44,7 @@ function Message({
         {isSuperChat && m.superChatAmount && (
           <Badge label={`Super Chat ${m.superChatAmount}`} tone="superchat" />
         )}
-        <span className="mx-1.5 text-foreground/90 break-words">{m.message}</span>
+        <span className="mx-1.5 text-foreground/90 break-words"><MessageText text={m.message} /></span>
       </div>
       <button
         type="button"
