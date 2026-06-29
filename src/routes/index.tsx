@@ -54,6 +54,7 @@ function Index() {
   const [authorFilter, setAuthorFilter] = useState("");
   const [onlyHighlight, setOnlyHighlight] = useState(false);
   const [onlySuperChat, setOnlySuperChat] = useState(false);
+  const [onlyMembers, setOnlyMembers] = useState(false);
   const readStateRef = useRef<Map<string, boolean>>(new Map());
   const [readVersion, setReadVersion] = useState(0);
   const [hideRead, setHideRead] = useState(false);
@@ -162,6 +163,7 @@ function Index() {
       if (onlySuperChat) {
         if (m.type !== "superChatEvent" && m.type !== "superStickerEvent") return false;
       }
+      if (onlyMembers && !m.isChatSponsor) return false;
       if (onlyHighlight) {
         const isHL =
           m.isChatOwner ||
@@ -175,7 +177,7 @@ function Index() {
       if (a && !m.authorName.toLowerCase().includes(a)) return false;
       return true;
     });
-  }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, hideRead, readVersion]);
+  }, [messages, search, authorFilter, onlyHighlight, onlySuperChat, onlyMembers, hideRead, readVersion]);
 
   const virtualizer = useVirtualizer({
     count: filtered.length,
@@ -278,6 +280,15 @@ function Index() {
                   className="accent-primary"
                 />
                 Solo Super Chats
+              </label>
+              <label className="flex items-center gap-2 text-xs text-muted-foreground px-2">
+                <input
+                  type="checkbox"
+                  checked={onlyMembers}
+                  onChange={(e) => setOnlyMembers(e.target.checked)}
+                  className="accent-primary"
+                />
+                Solo miembros
               </label>
               <label className="flex items-center gap-2 text-xs text-muted-foreground px-2">
                 <input
