@@ -67,6 +67,7 @@ function Index() {
   });
   const hoveredMessageIdRef = useRef<string | null>(null);
   const focusedMessageIdRef = useRef<string | null>(null);
+  const [fullScreenMessage, setFullScreenMessage] = useState<ChatMessage | null>(null);
 
   const continuationRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,6 +168,33 @@ function Index() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      // Full screen mode active — handle navigation
+      if (fullScreenMessage) {
+        if (e.key === "Escape") {
+          setFullScreenMessage(null);
+          return;
+        }
+        if (e.key === " " || e.key === "ArrowDown" || e.key === "ArrowRight") {
+          e.preventDefault();
+          const currentIdx = filtered.findIndex((m) => m.id === fullScreenMessage.id);
+          if (currentIdx < filtered.length - 1) {
+            setFullScreenMessage(filtered[currentIdx + 1]);
+          }
+          return;
+        }
+        if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          const currentIdx = filtered.findIndex((m) => m.id === fullScreenMessage.id);
+          if (currentIdx > 0) {
+            setFullScreenMessage(filtered[currentIdx - 1]);
+          }
+          return;
+        }
+        return; // Don't process other shortcuts in fullscreen
+      }
+
+      // Normal mode shortcuts
       if (e.key === "l" || e.key === "L") {
         const target = focusedMessageIdRef.current || hoveredMessageIdRef.current;
         if (target) toggleRead(target);
@@ -174,10 +202,17 @@ function Index() {
       if (e.key === "g" || e.key === "G") {
         toast.success("Guardado!");
       }
+      if (e.key === "f" || e.key === "F") {
+        const targetId = focusedMessageIdRef.current || hoveredMessageIdRef.current;
+        if (targetId) {
+          const msg = filtered.find((m) => m.id === targetId);
+          if (msg) setFullScreenMessage(msg);
+        }
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [toggleRead]);
+  }, [toggleRead, fullScreenMessage, filtered]);
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -459,8 +494,72 @@ function Index() {
         <div className="mx-auto max-w-3xl px-4 py-2 flex items-center justify-center gap-6 text-xs text-muted-foreground">
           <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">L</kbd> Marcar leído</span>
           <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">G</kbd> Guardado</span>
+          <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">F</kbd> Leer full screen</span>
         </div>
       </footer>
+
+      {/* Full screen reading mode */}
+      {fullScreenMessage && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-background"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Lectura completa"
+        >
+          {/* Header */}
+          <header className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <div className="flex items-center gap-3">
+              {fullScreenMessage.authorPhoto && (
+                <img
+                  src={fullScreenMessage.authorPhoto}
+                  alt={fullScreenMessage.authorName}
+                  className="w-10 h-10 rounded-full"
+                />
+              )}
+              <div>
+                <span className={`font-semibold ${fullScreenMessage.isChatOwner ? "text-owner" : fullScreenMessage.isChatModerator ? "text-moderator" : fullScreenMessage.isChatSponsor ? "text-sponsor" : "text-foreground"}`}>
+                  {fullScreenMessage.authorName}
+                </span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  {fullScreenMessage.isChatOwner && <Badge label="Autor" tone="owner" />}
+                  {fullScreenMessage.isChatModerator && <Badge label="Mod" tone="moderator" />}
+                  {fullScreenMessage.isChatSponsor && <Badge label="Miembro" tone="sponsor" />}
+                  {fullScreenMessage.type === "superChatEvent" && fullScreenMessage.superChatAmount && (
+                    <Badge label={`Super Chat ${fullScreenMessage.superChatAmount}`} tone="superchat" />
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFullScreenMessage(null)}
+              className="p-2 rounded-md hover:bg-accent text-muted-foreground"
+              aria-label="Cerrar"
+            >
+              ✕
+            </button>
+          </header>
+
+          {/* Message content */}
+          <main className="flex-1 flex items-center justify-center px-8 py-12">
+            <p className="text-2xl md:text-3xl text-foreground leading-relaxed max-w-2xl text-center">
+              {fullScreenMessage.message}
+            </p>
+          </main>
+
+          {/* Navigation footer */}
+          <footer className="px-6 py-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+            <span>
+              {filtered.findIndex((m) => m.id === fullScreenMessage.id) + 1} / {filtered.length}
+            </span>
+            <div className="flex items-center gap-4">
+              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">Espacio</kbd> Siguiente</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">←</kbd> Anterior</span>
+              <span><kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px]">Esc</kbd> Cerrar</span>
+            </div>
+          </footer>
+        </div>
+      )}
     </div>
   );
 }
